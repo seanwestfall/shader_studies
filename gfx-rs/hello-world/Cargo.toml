@@ -1,0 +1,2 @@
+[dependencies]
+sdl2 = “0.29.0”
