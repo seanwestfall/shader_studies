@@ -54,3 +54,44 @@ void main(void)
   } 
   gl_Position = gl_ProjectionMatrix * mfinal * vec4(gl_Vertex.xyz,1.0);
 }
+
+int main(int argc, char **argv)
+{
+	Bone *root,
+	     *tmp,
+	     *tmp2;
+
+	int i;
+	
+	/* Create a root bone
+	 * this is a "null" bone which represent a single point, which is the center of the structure.
+	 * Do you remember the sea star example above?
+	 */
+	if (!(root = boneAddChild(NULL, 100, 100, 0, 0, 0, "NullBone")))
+	{
+		fprintf(stderr, "Error! Can't create a root!\n");
+		exit(EXIT_FAILURE);
+	}
+
+	/* Creating a bone which has (x,y) == (0,0) and BONE_ABSOLUTE_POSITION NOT set
+	 *  causes this bone to start where its parent ends.
+	 * If ABSOLUTE_POSITION is off, x and y work as offsets with respect to the parents end position.
+	 * If it's on, then (x,y) will be placed at an absolute position on the screen.
+	 */
+	boneAddChild(root, 100, 100, M_PI_2, 10, BONE_ABSOLUTE, "Head");
+	tmp = boneAddChild(root, 0, 0, -M_PI_2, 30, 0, "Back");
+ 	tmp2 = boneAddChild(tmp, 0, 0, -M_PI_4, 30, 0, "LLeg");
+	boneAddChild(tmp2, 0, 0, 0, 30, 0, "LLeg2");
+	tmp2 = 	boneAddChild(tmp, 0, 0, -2 * M_PI_4, 30, 0, "RLeg");
+ 	boneAddChild(tmp2, 0, 0, 0, 30, 0, "RLeg2");
+	tmp = boneAddChild(root, 0, 0, 0, 20, 0, "LArm");
+	boneAddChild(tmp, 0, 0, 0, 20, 0, "LArm2");
+	tmp = boneAddChild(root, 0, 0, M_PI, 20, 0, "RArm");
+	boneAddChild(tmp, 0, 0, M_PI, 20, 0, "RArm2");
+
+	boneDumpTree(root, 0);
+	
+	root = boneFreeTree(root);
+
+	return EXIT_SUCCESS;
+}
